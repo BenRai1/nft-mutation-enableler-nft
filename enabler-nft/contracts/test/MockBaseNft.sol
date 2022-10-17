@@ -137,15 +137,15 @@ contract MockBaseNft is ERC721URIStorage, Ownable {
         return totalSupply;
     }
 
-    function getCurrtenNftAmoundMinted() public view returns (uint256) {
+    function getCurrtenBaseNftAmoundMinted() public view returns (uint256) {
         return _tokenIds.current();
     }
 
-    function getNumberOfNftsOwned(address _senderAddress) public view returns (uint256) {
+    function getNumberOfBaseNftsOwned(address _senderAddress) public view returns (uint256) {
         return numberOfNftsOwned[_senderAddress];
     }
 
-    function getOwnerOfNft(uint256 _tokenId) public view returns (address) {
+    function getOwnerOfBaseNft(uint256 _tokenId) public view returns (address) {
         return ownerOfNft[_tokenId];
     }
 

@@ -17,10 +17,9 @@ abstract contract BaseNftInterface {
     function getCurrtenBaseNftAmoundMinted() public view virtual returns (uint256);
 }
 
-contract EnablerNFT is ERC721URIStorage, Ownable {
-    address addressBaseNft = 0x23a87C860Ba89ee86773d65c4dba99978065EE30;
-    // BaseNft Address on Goerli : 0x23a87C860Ba89ee86773d65c4dba99978065EE30;
-    BaseNftInterface BaseNftContract = BaseNftInterface(addressBaseNft);
+contract EnablerNft is ERC721URIStorage, Ownable {
+    address BASE_NFT_CONTRACT_ADDRESS = 0xdf94318A713Af24b6D09E0513532e4e17a8c18C4;
+    BaseNftInterface BaseNftContract = BaseNftInterface(BASE_NFT_CONTRACT_ADDRESS);
 
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
@@ -34,6 +33,7 @@ contract EnablerNFT is ERC721URIStorage, Ownable {
 
     string svg =
         "<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMinYMin meet' viewBox='0 0 350 350'><style>.base { fill: #84cc16; font-family: serif; font-size: 24px; }</style><rect width='100%' height='100%' fill='black'/><text x='50%' y='50%' class='base' dominant-baseline='middle' text-anchor='middle'>ENABLER NFT</text></svg>";
+    //"<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMinYMin meet' viewBox='0 0 350 350'><style>.base { fill: "     "; font-family: serif; font-size: 24px; }</style><rect width='100%' height='100%' fill='     '/><text x='50%' y='50%' class='base' dominant-baseline='middle' text-anchor='middle'>           </text></svg>";
 
     event EnablerNftMinted(address sender, uint256 tokenId);
 
@@ -42,11 +42,15 @@ contract EnablerNFT is ERC721URIStorage, Ownable {
     }
 
     function mintEnablerNft(uint256 _tokenIdToMint) public {
-        //check if user ownes the Token that should be used for minting
-        // require(
-        //     BaseNftContract.getOwnerOfNft(_tokenIdToMint) == msg.sender,
-        //     "Token selected for mint does not belong to you"
-        // );
+        // check if user ownes the Token that should be used for minting
+        address ownerBaseNft = BaseNftContract.getOwnerOfBaseNft(_tokenIdToMint);
+        console.log("ownerBaseNft", ownerBaseNft);
+
+        require(
+            BaseNftContract.getOwnerOfBaseNft(_tokenIdToMint) == msg.sender,
+            "Token selected for mint does not belong to you"
+        );
+
         //check if token that should be used for minting is still entitled for minting
         require(
             alreadyUsedBaseNftIds[_tokenIdToMint] == false,
@@ -59,7 +63,7 @@ contract EnablerNFT is ERC721URIStorage, Ownable {
             bytes(
                 string(
                     abi.encodePacked(
-                        '{"name": "Enabler NFT", "description": "NFT needed to mutate the base NFT, "image": "data:image/svg+xml;base64,',
+                        '{"name": "Enabler NFT", "description": "NFT needed to mutate the base NFT", "image": "data:image/svg+xml;base64,',
                         Base64.encode(bytes(svg)),
                         '"}'
                     )
@@ -116,13 +120,17 @@ contract EnablerNFT is ERC721URIStorage, Ownable {
         return BaseNftContract.getNumberOfBaseNftsOwned(_owner);
     }
 
-    function setBaseNftAddress(address _address) public {
-        addressBaseNft = _address;
-        BaseNftContract = BaseNftInterface(addressBaseNft);
+    function setBaseNftAddress(address _newBaseNftContractAddress)
+        public
+        returns (BaseNftInterface)
+    {
+        BASE_NFT_CONTRACT_ADDRESS = _newBaseNftContractAddress;
+        BaseNftContract = BaseNftInterface(BASE_NFT_CONTRACT_ADDRESS);
+        return (BaseNftContract);
     }
 
     function getBaseNftAddress() public view returns (address) {
-        return addressBaseNft;
+        return BASE_NFT_CONTRACT_ADDRESS;
     }
 
     function checkIfBaseNftIdAlreadyUsed(uint256 _id) public view returns (bool) {

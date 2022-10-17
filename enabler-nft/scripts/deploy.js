@@ -1,7 +1,7 @@
 const { ethers, run, network } = require("hardhat")
 
 const main = async () => {
-    const contractFactory = await ethers.getContractFactory("EnablerNFT")
+    const contractFactory = await ethers.getContractFactory("EnablerNft")
     console.log("Deploying contract...")
     const contract = await contractFactory.deploy()
     console.log("Waiting for contract to finish deploying")
