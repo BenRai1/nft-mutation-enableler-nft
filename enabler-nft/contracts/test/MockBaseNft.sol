@@ -37,7 +37,7 @@ contract MockBaseNft is ERC721URIStorage, Ownable {
     event NewFirstNftMinted(address sender, uint256 tokenId);
 
     constructor() ERC721("FirstNftBb", "FNBB") {
-        console.log("Constructor is working");
+        console.log("");
     }
 
     function pickRandomText(uint256 tokenId) public view returns (string memory) {
@@ -119,7 +119,7 @@ contract MockBaseNft is ERC721URIStorage, Ownable {
 
         _setTokenURI(newItemId, finalTokenUri);
 
-        console.log("An NFT w/ ID %s has been minted to %s", newItemId, msg.sender);
+        // console.log("An NFT w/ ID %s has been minted to %s", newItemId, msg.sender);
         numberOfNftsOwned[msg.sender]++;
         // console.log("numberOfNftsOwned", numberOfNftsOwned[msg.sender]);
         ownerOfNft[newItemId] = msg.sender;

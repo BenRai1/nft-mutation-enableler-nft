@@ -33,18 +33,15 @@ contract EnablerNft is ERC721URIStorage, Ownable {
 
     string svg =
         "<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMinYMin meet' viewBox='0 0 350 350'><style>.base { fill: #84cc16; font-family: serif; font-size: 24px; }</style><rect width='100%' height='100%' fill='black'/><text x='50%' y='50%' class='base' dominant-baseline='middle' text-anchor='middle'>ENABLER NFT</text></svg>";
-    //"<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMinYMin meet' viewBox='0 0 350 350'><style>.base { fill: "     "; font-family: serif; font-size: 24px; }</style><rect width='100%' height='100%' fill='     '/><text x='50%' y='50%' class='base' dominant-baseline='middle' text-anchor='middle'>           </text></svg>";
 
     event EnablerNftMinted(address sender, uint256 tokenId);
 
     constructor() ERC721("EnablerNFT", "ENAB") {
-        console.log("EnablerNftInterface Constructor is working");
+        console.log("");
     }
 
     function mintEnablerNft(uint256 _tokenIdToMint) public {
         // check if user ownes the Token that should be used for minting
-        address ownerBaseNft = BaseNftContract.getOwnerOfBaseNft(_tokenIdToMint);
-        console.log("ownerBaseNft", ownerBaseNft);
 
         require(
             BaseNftContract.getOwnerOfBaseNft(_tokenIdToMint) == msg.sender,
@@ -54,7 +51,7 @@ contract EnablerNft is ERC721URIStorage, Ownable {
         //check if token that should be used for minting is still entitled for minting
         require(
             alreadyUsedBaseNftIds[_tokenIdToMint] == false,
-            "token was already used for minting an Enabler Nft"
+            "Token was already used for minting an Enabler Nft"
         );
 
         uint256 newItemId = _tokenIds.current();
@@ -93,10 +90,9 @@ contract EnablerNft is ERC721URIStorage, Ownable {
         alreadyUsedBaseNftIds[_tokenIdToMint] = true;
         totalAvailableSupplyEnablerNfts++;
         emit EnablerNftMinted(msg.sender, newItemId);
-        console.log("Token was minted successfully");
     }
 
-    function setTotalSupplyEnablerNfts(uint256 _newTotalSupply) external onlyOwner {
+    function setTotalSupplyEnablerNft(uint256 _newTotalSupply) external onlyOwner {
         totalSupplyEnablerNfts = _newTotalSupply;
     }
 
