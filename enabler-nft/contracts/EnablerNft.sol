@@ -27,6 +27,8 @@ contract EnablerNft is ERC721URIStorage, Ownable {
     mapping(address => uint256) numberOfEnablerNftsOwned;
     mapping(uint256 => address) ownerOfEnablerNft;
     mapping(uint256 => bool) alreadyUsedBaseNftIds;
+    uint256[] usedBaseNftIdsArray;
+    uint256 lengthBaseNftArray;
 
     uint256 totalSupplyEnablerNfts = 50;
     uint256 totalAvailableSupplyEnablerNfts;
@@ -40,17 +42,17 @@ contract EnablerNft is ERC721URIStorage, Ownable {
         console.log("");
     }
 
-    function mintEnablerNft(uint256 _tokenIdToMint) public {
+    function mintEnablerNft(uint256 _baseNftID) public {
         // check if user ownes the Token that should be used for minting
 
         require(
-            BaseNftContract.getOwnerOfBaseNft(_tokenIdToMint) == msg.sender,
+            BaseNftContract.getOwnerOfBaseNft(_baseNftID) == msg.sender,
             "Token selected for mint does not belong to you"
         );
 
         //check if token that should be used for minting is still entitled for minting
         require(
-            alreadyUsedBaseNftIds[_tokenIdToMint] == false,
+            alreadyUsedBaseNftIds[_baseNftID] == false,
             "Token was already used for minting an Enabler Nft"
         );
 
@@ -72,22 +74,15 @@ contract EnablerNft is ERC721URIStorage, Ownable {
             abi.encodePacked("data:application/json;base64,", json)
         );
 
-        // console.log("\n--------------------");
-        // console.log(finalTokenUri);
-        // console.log("--------------------\n");
-
         _safeMint(msg.sender, newItemId);
-
         _setTokenURI(newItemId, finalTokenUri);
 
-        // console.log("An NFT w/ ID %s has been minted to %s", newItemId, msg.sender);
         numberOfEnablerNftsOwned[msg.sender]++;
-        // console.log("numberOfNftsOwned", numberOfNftsOwned[msg.sender]);
         ownerOfEnablerNft[newItemId] = msg.sender;
-        // console.log("ownerOfNft", ownerOfNft[newItemId]);
-
+        usedBaseNftIdsArray.push(_baseNftID);
+        lengthBaseNftArray++;
         _tokenIds.increment();
-        alreadyUsedBaseNftIds[_tokenIdToMint] = true;
+        alreadyUsedBaseNftIds[_baseNftID] = true;
         totalAvailableSupplyEnablerNfts++;
         emit EnablerNftMinted(msg.sender, newItemId);
     }
@@ -116,16 +111,19 @@ contract EnablerNft is ERC721URIStorage, Ownable {
         return BaseNftContract.getNumberOfBaseNftsOwned(_owner);
     }
 
-    function setBaseNftAddress(address _newBaseNftContractAddress)
-        public
-        returns (BaseNftInterface)
-    {
+    function setBaseNftContractAddress(address _newBaseNftContractAddress) public {
+        require(
+            _newBaseNftContractAddress != getBaseNftContractAddress(),
+            "The new Base NFT Contract Address is the same as the old one"
+        );
         BASE_NFT_CONTRACT_ADDRESS = _newBaseNftContractAddress;
         BaseNftContract = BaseNftInterface(BASE_NFT_CONTRACT_ADDRESS);
-        return (BaseNftContract);
+        for (uint256 i; i < lengthBaseNftArray; i++) {
+            alreadyUsedBaseNftIds[usedBaseNftIdsArray[i]] = false;
+        }
     }
 
-    function getBaseNftAddress() public view returns (address) {
+    function getBaseNftContractAddress() public view returns (address) {
         return BASE_NFT_CONTRACT_ADDRESS;
     }
 

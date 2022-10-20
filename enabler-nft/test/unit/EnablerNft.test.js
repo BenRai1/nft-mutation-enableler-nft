@@ -21,7 +21,7 @@ describe("EnablerNft", () => {
         accounts = await ethers.getSigners()
         owner = accounts[0].address
         // set the BaseNFT Contract Address
-        await enablerNftContract.setBaseNftAddress(mockBaseNftContract.address)
+        await enablerNftContract.setBaseNftContractAddress(mockBaseNftContract.address)
     })
     context("Total supply", async () => {
         it("Should set the total supply propperly", async () => {
@@ -35,11 +35,30 @@ describe("EnablerNft", () => {
         })
     })
 
-    context("Minting Enabler NFT success", async () => {
+    context("Setting Base NFT contract Address", async () => {
         it("Address of the Base NFt should be the one that was set", async () => {
-            assert.equal(await enablerNftContract.getBaseNftAddress(), mockBaseNftContract.address)
+            assert.equal(
+                await enablerNftContract.getBaseNftContractAddress(),
+                mockBaseNftContract.address
+            )
+        })
+        it("Setting a new Base NFT Address should reset the mapping of the used Base NFT Ids", async () => {
+            await enablerNftContract.mintEnablerNft(0)
+            await enablerNftContract.setBaseNftContractAddress(
+                "0x103A1AAda81BB8877017E04274ab5256e34cB048"
+            )
+            assert.equal(await enablerNftContract.checkIfBaseNftIdAlreadyUsed(0), false)
         })
 
+        it("Mapping of used Base Nfts schould only be reste when BaseNft Address really changes", async () => {
+            await enablerNftContract.mintEnablerNft(0)
+            await expect(
+                enablerNftContract.setBaseNftContractAddress(mockBaseNftContract.address)
+            ).to.be.revertedWith("The new Base NFT Contract Address is the same as the old one")
+        })
+    })
+
+    context("Minting Enabler NFT success", async () => {
         it("Minting should increase the minted Amount of nfts by 1", async () => {
             await enablerNftContract.mintEnablerNft(0)
             assert.equal(await enablerNftContract.getCurrentEnablerNftAmoundMinted(), 1)
