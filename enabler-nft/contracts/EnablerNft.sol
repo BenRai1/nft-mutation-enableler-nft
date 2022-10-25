@@ -18,7 +18,7 @@ abstract contract BaseNftInterface {
 }
 
 contract EnablerNft is ERC721URIStorage, Ownable {
-    address BASE_NFT_CONTRACT_ADDRESS = 0xdf94318A713Af24b6D09E0513532e4e17a8c18C4;
+    address BASE_NFT_CONTRACT_ADDRESS = 0xd63b27185A5E1fD04Bdca693F0261f4A849338d7;
     BaseNftInterface BaseNftContract = BaseNftInterface(BASE_NFT_CONTRACT_ADDRESS);
 
     using Counters for Counters.Counter;
