@@ -1,53 +1,52 @@
+const { ethers } = require("hardhat")
+
 const main = async () => {
     //deploy MOCK contracts
-    const nftContractFactory1 = await ethers.getContractFactory("MockBaseNft")
-    const mockBaseNftContract = await nftContractFactory1.deploy()
-    await mockBaseNftContract.deployed()
-    console.log("mockBaseNftContract deployed to:", mockBaseNftContract.address)
+    const nftContractFactory1 = await ethers.getContractFactory("MockPirateApes")
+    const mockPirateApesContract = await nftContractFactory1.deploy()
+    await mockPirateApesContract.deployed()
+    console.log("MockPirateApesContract deployed to:", mockPirateApesContract.address)
 
-    let txn, totalAvailableSupply
+    let txn, totalRumTokensMinted
 
-    txn = await mockBaseNftContract.mintBaseNft()
+    txn = await mockPirateApesContract.safeMintPirateApe()
     console.log("NFT 1 Minted ")
 
-    txn = await mockBaseNftContract.mintBaseNft()
+    txn = await mockPirateApesContract.safeMintPirateApe()
     console.log("NFT 2 Minted")
 
-    //------------deploy Enabler contract----------
+    //------------deploy Rum Token contract----------
 
-    const nftContractFactory = await ethers.getContractFactory("EnablerNft")
-    const enablerNftContract = await nftContractFactory.deploy()
-    await enablerNftContract.deployed()
-    console.log("enablerNftContract deployed to:", enablerNftContract.address)
+    const RumTokenFactory = await ethers.getContractFactory("RumToken")
+    const rumTokenContract = await RumTokenFactory.deploy()
+    await rumTokenContract.deployed()
+    console.log("Rum Token Contract was deployed to: ", rumTokenContract.address)
 
-    // set the BaseNFT Contract Address
+    // set the Pirate Apes Contract Address
 
-    await enablerNftContract.setBaseNftAddress(mockBaseNftContract.address)
+    await rumTokenContract.setPirateApesContractAddress(mockPirateApesContract.address)
 
-    // console.log("BaseNftContract", txn)
-    const baseNftAddress = await enablerNftContract.getBaseNftAddress()
-    console.log("getBaseNftAddress", baseNftAddress)
+    const pirateApesAddress = await rumTokenContract.getPirateApesContractAddress()
+    console.log("pirateApesAddress set to", pirateApesAddress)
 
     // mint 3 Enabler NFTs
 
-    txn = await enablerNftContract.mintEnablerNft(0)
-    await txn.wait()
-    totalAvailableSupply = await enablerNftContract.getAvaialableSupplyEnablerNfts()
-    console.log("totalAvailableSupply", totalAvailableSupply)
+    txn = await rumTokenContract.mintRumToken(1, 0)
+    totalRumTokensMinted = await rumTokenContract.getNumberRumTokensMinted()
+    console.log("totalRumTokensMinted", totalRumTokensMinted)
 
-    // txn = await enablerNftContract.mintEnablerNft(3)
-    // await txn.wait()
-    // console.log("Should not be mintable because does not own ")
-    // totalAvailableSupply = await enablerNftContract.getAvaialableSupplyEnablerNfts()
-    // console.log("totalAvailableSupply", totalAvailableSupply)
+    txn = await rumTokenContract.mintRumToken(1, 1)
+    totalRumTokensMinted = await rumTokenContract.getNumberRumTokensMinted()
+    console.log("totalRumTokensMinted", totalRumTokensMinted)
 
-    //     //Testing burn
+    //Testing burn
+    totalAvailableSupply = await rumTokenContract.getAvaialableSupplyRumTokens()
+    console.log("Available Rum Tokens before burn ", totalAvailableSupply)
 
-    //     txn = await enablerNftContract.burnNft(0)
-    //     await txn.wait()
-    //     console.log("NFT 2 was minted")
-    //     totalAvailableSupply = await enablerNftContract.getAvaialableSupplyEnablerNfts()
-    //     console.log("totalAvailableSupply", totalAvailableSupply)
+    txn = await rumTokenContract.burnNft(1)
+    console.log("1 Rum Token was burned")
+    totalAvailableSupply = await rumTokenContract.getAvaialableSupplyRumTokens()
+    console.log("Available Rum Tokens after burn ", totalAvailableSupply)
 }
 
 const runMain = async () => {
