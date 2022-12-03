@@ -1,17 +1,17 @@
 const { ethers, run, network } = require("hardhat")
 
 const main = async () => {
-    const contractFactory = await ethers.getContractFactory("EnablerNft")
+    const RumTokenFactory = await ethers.getContractFactory("RumToken")
     console.log("Deploying contract...")
-    const contract = await contractFactory.deploy()
+    const rumTokenContract = await RumTokenFactory.deploy()
     console.log("Waiting for contract to finish deploying")
-    await contract.deployed()
-    console.log("EnablerNftContract deployed to:", contract.address)
+    await rumTokenContract.deployed()
+    console.log("Rum Token Contract deployed to:", rumTokenContract.address)
     if (network.config.chainId === 5 && process.env.ETHERSCAN_API_KEY) {
         console.log("Waiting for 6 block to pass...")
-        await contract.deployTransaction.wait(6)
+        await rumTokenContract.deployTransaction.wait(6)
         console.log("verifying contract...")
-        await verify(contract.address, [])
+        await verify(rumTokenContract.address, [])
     }
 }
 

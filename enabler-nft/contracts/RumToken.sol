@@ -8,6 +8,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
 
+// deployed to 0x94d1B12300E50F35492B0698D8A0F3e74Bca7C44
+
 abstract contract PirateApesInterface {
     function getNumberOfPirateApeNftsOwned(address _senderAddress) public view virtual returns (uint256);
     function ownerOf(uint256 tokenId) public view virtual returns (address);
@@ -104,7 +106,7 @@ contract RumToken is ERC1155, Ownable, Pausable, ERC1155Burnable, ReentrancyGuar
     }
 
     function burnRumToken(uint256 _amount) public {
-        require(balanceOf(msg.sender, rumToken) >0, "You do not have any Rumtokens to burn");
+        require(balanceOf(msg.sender, rumToken) >0, "You do not have any Rum Tokens to burn");
         safeTransferFrom(msg.sender,0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b, rumToken, _amount,"") ;
         totalAvailableSupplyRumTokens--;
     }

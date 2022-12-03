@@ -112,8 +112,8 @@ describe("RumToken", () => {
         })
     })
 
-    context("Burning Nfts", async () => {
-        it("Burning NFT should reduce the supply of the Nft", async () => {
+    context("Burning Rum Tokens", async () => {
+        it("Burning Rum Tokens should reduce the supply of Rum Tokens", async () => {
             await rumTokenContract.mintRumToken(1, 0)
             await rumTokenContract.mintRumToken(1, 1)
             const supply = await rumTokenContract.getAvaialableSupplyRumTokens()
